@@ -47,6 +47,7 @@ export default function Page({ params }: Readonly<iProps>) {
 						setList(data.ls)
 						console.log('res:', res)
 						setSaving(false)
+						setValue(0)
 					}}
 				>
 					<div className="join">
