@@ -28,13 +28,12 @@ export default function Page({ params }: Readonly<iProps>) {
 	}, [url, id, list, setList])
 
 	return (
-		<div className="hero min-h-screen">
+		<div className="hero h-full align-top">
 			<div className="hero-overlay bg-white dark:bg-gray-900"></div>
-			<div className="hero-content flex flex-col min-h-screen text-neutral-content text-center items-start">
-				<Link href='/' className='text-left text-black dark:text-gray-300'>&laquo; Total</Link>
-				<h1 className='text-[10rem] dark:text-gray-500 mx-auto p-0'>{id}</h1>
+			<div className="hero-content flex flex-col text-neutral-content text-center items-start mb-auto">
+				<Link href='/' className='text-left text-black dark:text-gray-300 mt-5'>&laquo; Total</Link>
 				<form
-					className="flex flex-col max-w-sm gap-7"
+					className="flex flex-col max-w-sm gap-7 mt-5"
 					onSubmit={async e => {
 						e.preventDefault()
 						setSaving(true)
@@ -50,15 +49,18 @@ export default function Page({ params }: Readonly<iProps>) {
 						setSaving(false)
 					}}
 				>
-					<input
-						type='number'
-						className="input input-xl text-black dark:text-gray-300 text-6xl w-full px-8 py-[3rem]"
-						min={0}
-						max={999}
-						value={value || ''}
-						aria-label='value'
-						onChange={e => setValue(Math.abs(parseInt(e.target.value) || 0))}
-						autoFocus />
+					<div className="join">
+						<span className="join-item text-8xl px-3">{id}</span>
+						<input
+							type='number'
+							className="input input-xl join-item text-black dark:text-gray-300 text-6xl w-full px-8 py-[3rem]"
+							min={0}
+							max={999}
+							value={value || ''}
+							aria-label='value'
+							onChange={e => setValue(Math.abs(parseInt(e.target.value) || 0))}
+							autoFocus />
+					</div>
 					<button
 						className="flex relative btn btn-accent btn-outline text-4xl rounded-2xl w-full p-7"
 						disabled={value == 0 || saving}
