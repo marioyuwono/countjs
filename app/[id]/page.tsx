@@ -1,18 +1,18 @@
 'use client'
-import React, { use, useEffect, useState } from 'react'
+import { IRow } from '@/types/row'
 import moment from 'moment'
-import { iRow } from '../components/interfaces'
 import Link from 'next/link'
+import { use, useEffect, useState } from 'react'
 
-interface iProps {
+interface IProps {
 	params: Promise<{ id: string }>
 }
 
 
-export default function Page({ params }: Readonly<iProps>) {
+export default function Page({ params }: Readonly<IProps>) {
 	const [value, setValue] = useState(0)
 	const [saving, setSaving] = useState(false)
-	const [list, setList] = useState<iRow[] | undefined>(undefined)
+	const [list, setList] = useState<IRow[] | undefined>(undefined)
 	let { id } = use(params)
 	id = id.toUpperCase()
 	const url = `/api/data/${id}`

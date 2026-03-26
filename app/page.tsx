@@ -1,8 +1,8 @@
 'use client'
-import { useCallback, useEffect, useState } from "react"
-import { iRow } from "./components/interfaces"
 import Link from "next/link"
-import { Reload } from "./components/icons"
+import { useCallback, useEffect, useState } from "react"
+import { IRow } from "../types/row"
+import { Reload } from "./components/Icons"
 
 interface iRef {
 	[name: string]: number
@@ -29,7 +29,7 @@ export default function Home() {
 					if (prev == undefined) {
 						prev = {} as iRef
 					}
-					data.ls.forEach((row: iRow) => {
+					data.ls.forEach((row: IRow) => {
 						console.log('s:', sum, row.v)
 						prev[row.s] = row.v
 						sum += row.v

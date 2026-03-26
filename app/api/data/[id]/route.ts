@@ -1,17 +1,17 @@
-import { iRow } from "@/app/components/interfaces"
-import { serverDb } from "@/app/firestore/config"
-import { merge } from "@/app/firestore/methods"
+import { merge } from "@/lib/firestore/access"
+import { serverDb } from "@/lib/firestore/config"
+import { IRow } from "@/types/row"
 import { DocumentData, QuerySnapshot } from "firebase-admin/firestore"
 import moment from "moment"
 import { NextRequest, NextResponse } from "next/server"
 
-interface iProps {
+interface IProps {
 	params: Promise<{
 		id: string,
 	}>,
 }
 
-export async function GET(req: NextRequest, { params }: Readonly<iProps>) {
+export async function GET(req: NextRequest, { params }: Readonly<IProps>) {
 	const { id } = await params
 	const ls = await load(id)
 	return NextResponse.json({
@@ -19,7 +19,7 @@ export async function GET(req: NextRequest, { params }: Readonly<iProps>) {
 	})
 }
 
-export async function POST(req: NextRequest, { params }: Readonly<iProps>) {
+export async function POST(req: NextRequest, { params }: Readonly<IProps>) {
 	const { id } = await params
 	const body = await req.json()
 	const data = {
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest, { params }: Readonly<iProps>) {
 	})
 }
 
-async function load(id: string): Promise<iRow[]> {
+async function load(id: string): Promise<IRow[]> {
 	const name = id.toUpperCase()
 
 	if (name == 'ALL') {
@@ -54,7 +54,7 @@ async function load(id: string): Promise<iRow[]> {
 				found[row.s] = true
 				return true
 			}
-		}).sort((a: iRow, b: iRow) => a.s > b.s ? 1 : -1)
+		}).sort((a: IRow, b: IRow) => a.s > b.s ? 1 : -1)
 		return ls
 
 	} else {
@@ -67,12 +67,12 @@ async function load(id: string): Promise<iRow[]> {
 	}
 }
 
-function convert(snapshots: QuerySnapshot<DocumentData>): iRow[] {
+function convert(snapshots: QuerySnapshot<DocumentData>): IRow[] {
 	return snapshots.docs.map(doc => {
 		const data = doc.data()
 		data['id'] = doc.id
 		data['v'] = parseInt(data.v)
 		data['ts'] = data.t._seconds * 1000 + data.t._nanoseconds / 1000 / 1000
-		return data as iRow
+		return data as IRow
 	})
 }
