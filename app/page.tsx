@@ -2,7 +2,7 @@
 import Link from "next/link"
 import { useCallback, useEffect, useState } from "react"
 import { IRow } from "../types/row"
-import { Reload } from "./components/Icons"
+import { Reload } from "./components/icons"
 
 interface iRef {
 	[name: string]: number
