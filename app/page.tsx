@@ -24,18 +24,14 @@ export default function Home() {
 		fetch(url)
 			.then(res => res.json())
 			.then(data => {
+				const values = {} as iRef
 				let sum = 0
-				setRef(prev => {
-					if (prev == undefined) {
-						prev = {} as iRef
-					}
-					data.ls.forEach((row: IRow) => {
-						prev[row.s] = row.v
-						sum += row.v
-					})
-					setTotal(sum)
-					return prev
+				data.ls.forEach((row: IRow) => {
+					values[row.s] = row.v
+					sum += row.v
 				})
+				setTotal(sum)
+				setRef(values)
 				setLoading(false)
 			})
 	}, [url, setLoading, setRef, setTotal])
