@@ -30,7 +30,6 @@ export default function Home() {
 						prev = {} as iRef
 					}
 					data.ls.forEach((row: IRow) => {
-						console.log('s:', sum, row.v)
 						prev[row.s] = row.v
 						sum += row.v
 					})
@@ -50,7 +49,7 @@ export default function Home() {
 	return (
 		<div className="hero min-h-screen">
 			<div className="hero-overlay bg-white dark:bg-gray-900"></div>
-			<div className="hero-content min-h-screen text-neutral-content text-center items-start pt-[4rem]">
+			<div className="hero-content min-h-screen text-neutral-content text-center items-start pt-16">
 				<div className="flex flex-col max-w-sm">
 					<div className='flex gap-3'>
 						<div className='text-4xl text-black dark:text-gray-300'>{loading ? '.' : total}</div>
@@ -58,14 +57,14 @@ export default function Home() {
 							<Reload className={`size-6 text-black dark:text-gray-300${loading ? ' animate-spin items-center' : ''}`} />
 						</button>
 					</div>
-					<div className='grid grid-cols-3 gap-x-6 gap-y-7 mt-[3rem]'>
+					<div className='grid grid-cols-3 gap-x-6 gap-y-7 mt-12'>
 						{
 							letters.map(alphabet => (
 								<Link href={`/${alphabet}`} className='join items-center gap-1' key={alphabet}>
 									<div className='btn join-item w-7'>
 										{alphabet}
 									</div>
-									<span className='join-item text-black dark:text-gray-400 text-right w-7'>
+									<span className='join-item border-0 text-black dark:text-gray-400 hover:text-blue-500 text-right w-7'>
 										{loading
 											? '.'
 											: ref

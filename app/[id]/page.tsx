@@ -2,7 +2,8 @@
 import { IRow } from '@/types/row'
 import moment from 'moment'
 import Link from 'next/link'
-import { use, useEffect, useState } from 'react'
+import { SubmitEvent, use, useEffect, useRef, useState } from 'react'
+import { AlertError } from '../components/alert'
 
 interface IProps {
 	params: Promise<{ id: string }>
@@ -12,10 +13,61 @@ interface IProps {
 export default function Page({ params }: Readonly<IProps>) {
 	const [value, setValue] = useState(0)
 	const [saving, setSaving] = useState(false)
+	const [error, setError] = useState<string | null>(null)
 	const [list, setList] = useState<IRow[] | undefined>(undefined)
+	const savingRef = useRef(false)
 	let { id } = use(params)
 	id = id.toUpperCase()
 	const url = `/api/data/${id}`
+
+	async function onSubmit(e: SubmitEvent<HTMLFormElement>) {
+		e.preventDefault()
+		if (savingRef.current) return
+
+		setError(null)
+		savingRef.current = true
+		setSaving(true)
+
+		try {
+			let attempts = 0
+			while (true) {
+				try {
+					const res = await fetch(url, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({
+							value,
+						}),
+					})
+
+					if (!res.ok) {
+						throw new Error(`Request failed with status ${res.status}`)
+					}
+
+					const data = await res.json()
+					setList(data.ls)
+					setValue(0)
+					return
+				} catch (err) {
+					attempts += 1
+					if (attempts >= 3) {
+						const message = err instanceof Error ? err.message : 'Unable to save value.'
+						setError(`Save failed: ${message}`)
+						return
+					}
+					await new Promise(resolve => setTimeout(resolve, attempts * 1000))
+				}
+			}
+		} catch (err) {
+			console.error('Failed to save value after retries', err)
+			setError('Save failed. Please try again.')
+		} finally {
+			savingRef.current = false
+			setSaving(false)
+		}
+	}
 
 	useEffect(() => {
 		if (list == undefined) {
@@ -34,27 +86,13 @@ export default function Page({ params }: Readonly<IProps>) {
 				<Link href='/' className='text-left text-black dark:text-gray-300 mt-5'>&laquo; Total</Link>
 				<form
 					className="flex flex-col max-w-sm gap-7 mt-5"
-					onSubmit={async e => {
-						e.preventDefault()
-						setSaving(true)
-						const res = await fetch(url, {
-							method: 'POST',
-							body: JSON.stringify({
-								value,
-							}),
-						})
-						const data = await res.json()
-						setList(data.ls)
-						console.log('res:', res)
-						setSaving(false)
-						setValue(0)
-					}}
+					onSubmit={onSubmit}
 				>
 					<div className="join">
 						<span className="join-item text-8xl px-3">{id}</span>
 						<input
 							type='number'
-							className="input input-xl join-item text-black dark:text-gray-300 text-6xl w-full px-8 py-[3rem]"
+							className="input input-xl join-item text-black dark:text-gray-300 text-6xl w-full px-8 py-12"
 							min={0}
 							max={999}
 							value={value || ''}
@@ -64,7 +102,7 @@ export default function Page({ params }: Readonly<IProps>) {
 					</div>
 					<button
 						className="flex relative btn btn-accent btn-outline text-4xl rounded-2xl w-full p-7"
-						disabled={value == 0 || saving}
+						disabled={value == 0}
 					>
 						<span className="absolute inset-0 flex justify-center items-center">
 							{saving ? "Saving" : "Save"}
@@ -75,6 +113,7 @@ export default function Page({ params }: Readonly<IProps>) {
 							<span className="loading loading-spinner loading-xs absolute right-3"></span>
 						}
 					</button>
+					{error && <AlertError>{error}</AlertError>}
 					<div className="overflow-x-auto mt-7">
 						<table className="table">
 							<tbody>
