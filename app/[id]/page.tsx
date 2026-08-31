@@ -102,7 +102,7 @@ export default function Page({ params }: Readonly<IProps>) {
 					</div>
 					<button
 						className="flex relative btn btn-accent btn-outline text-4xl rounded-2xl w-full p-7"
-						disabled={value == 0}
+						disabled={value == 0 || saving}
 					>
 						<span className="absolute inset-0 flex justify-center items-center">
 							{saving ? "Saving" : "Save"}
