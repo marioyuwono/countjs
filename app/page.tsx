@@ -83,19 +83,15 @@ export default function Home() {
 }
 
 function FormatDate({ ts, className }: { ts: number, className?: string }) {
-	if (ts == 0) {
-		return null
-	} else {
-		const dt = new Date(ts)
-		const pad = (n: number) => String(n).padStart(2, '0')
-		return (
-			<p className={className}>
-				{pad(dt.getHours())}
-				:
-				{pad(dt.getMinutes())}
-				:
-				{pad(dt.getSeconds())}
-			</p>
-		)
-	}
+	const dt = ts > 0 ? new Date(ts) : new Date
+	const pad = (n: number) => String(n).padStart(2, '0')
+	return (
+		<p className={className}>
+			{pad(dt.getHours())}
+			:
+			{pad(dt.getMinutes())}
+			:
+			{pad(dt.getSeconds())}
+		</p>
+	)
 }
