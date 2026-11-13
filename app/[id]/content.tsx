@@ -1,5 +1,5 @@
 'use client'
-import { IRow } from '@/types/row'
+import { IRowExt } from '@/types/row'
 import moment from 'moment'
 import Link from 'next/link'
 import { SubmitEvent, useEffect, useRef, useState } from 'react'
@@ -10,7 +10,7 @@ export default function Content({ id }: Readonly<{ id: string }>) {
 	const [value, setValue] = useState(0)
 	const [saving, setSaving] = useState(false)
 	const [error, setError] = useState<string | null>(null)
-	const [list, setList] = useState<IRow[] | undefined>(undefined)
+	const [list, setList] = useState<IRowExt[] | undefined>(undefined)
 	const savingRef = useRef(false)
 	const url = `/api/data/${normalizedId}`
 
