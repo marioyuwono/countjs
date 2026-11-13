@@ -3,6 +3,7 @@ import { serverDb } from "@/lib/firestore/config"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { IRow, IRowExt } from "@/types/row"
 import { DocumentData, QuerySnapshot } from "@google-cloud/firestore"
+import moment from "moment"
 
 const TABLE_LIST = 'kkr'
 const TABLE_SUMMARY = 'kkr_summary'
@@ -15,7 +16,7 @@ export async function load(id: string): Promise<IRow[]> {
 	}
 }
 
-export async function loadFromSupabase(id: string): Promise<IRow[]> {
+export async function loadFromSupabase(id: string): Promise<IRowExt[]> {
 	const name = id.toUpperCase()
 	const supabase = createAdminClient()
 
@@ -31,13 +32,10 @@ export async function loadFromSupabase(id: string): Promise<IRow[]> {
 		throw result.error
 	}
 
-	return (result.data ?? []).map(row => ({
-		...row,
-		v: parseInt(String(row.v), 10),
-	})) as IRow[]
+	return convertSupabase(result.data ?? [])
 }
 
-export async function loadFromFirestore(id: string): Promise<IRow[]> {
+export async function loadFromFirestore(id: string): Promise<IRowExt[]> {
 	const name = id.toUpperCase();
 
 	if (name == 'ALL') {
@@ -98,17 +96,17 @@ export async function saveToFirestore(docId: string, data: IRow) {
 export function convertSupabase(rows: IRow[]): IRowExt[] {
 	return rows.map(row => ({
 		...row,
-		id: row['s'],
+		id: `${row['s']}-${moment(row.t).format('YYYYMMDD-HHmmss')}`,
 		ts: row.t ? new Date(row.t).getTime() : Date.now(),
 	}))
 }
 
-export function convertFirestore(snapshots: QuerySnapshot<DocumentData>): IRow[] {
+export function convertFirestore(snapshots: QuerySnapshot<DocumentData>): IRowExt[] {
 	return snapshots.docs.map(doc => {
 		const data = doc.data()
 		data['id'] = doc.id
 		data['v'] = parseInt(data.v)
 		data['ts'] = data.t._seconds * 1000 + data.t._nanoseconds / 1000 / 1000
-		return data as IRow
+		return data as IRowExt
 	})
 }

@@ -7,7 +7,7 @@ import { AlertError } from '../components/alert'
 
 export default function Content({ id }: Readonly<{ id: string }>) {
 	const normalizedId = id.toUpperCase()
-	const [value, setValue] = useState(0)
+	const [value, setValue] = useState<string>('')
 	const [saving, setSaving] = useState(false)
 	const [error, setError] = useState<string | null>(null)
 	const [list, setList] = useState<IRowExt[] | undefined>(undefined)
@@ -42,7 +42,7 @@ export default function Content({ id }: Readonly<{ id: string }>) {
 
 					const data = await res.json()
 					setList(data.ls)
-					setValue(0)
+					setValue('')
 					return
 				} catch (err) {
 					attempts += 1
@@ -89,14 +89,19 @@ export default function Content({ id }: Readonly<{ id: string }>) {
 							className="input input-xl join-item text-black dark:text-gray-300 text-6xl w-full px-8 py-12"
 							min={0}
 							max={999}
-							value={value || ''}
+							value={value}
 							aria-label='value'
-							onChange={e => setValue(Math.abs(parseInt(e.target.value) || 0))}
+							onChange={e => {
+								const v = e.target.value
+								if (/^\d*$/.test(v) && (v === '' || Number(v) <= 999)) {
+									setValue(v)
+								}
+							}}
 							autoFocus />
 					</div>
 					<button
 						className="flex relative btn btn-accent btn-outline text-4xl rounded-2xl w-full p-7"
-						disabled={value == 0 || saving}
+						disabled={saving}
 					>
 						<span className="absolute inset-0 flex justify-center items-center">
 							{saving ? "Saving" : "Save"}
@@ -115,7 +120,7 @@ export default function Content({ id }: Readonly<{ id: string }>) {
 									list?.map(row => (
 										<tr key={row.id}>
 											<td className='text-3xl text-black dark:text-gray-300'>{row.v}</td>
-											<td className='text-2xl text-gray-400  dark:text-gray-500 text-right'>{moment(row.ts).format('HH:MM')}</td>
+											<td className='text-2xl text-gray-400  dark:text-gray-500 text-right' data-ts={moment(row.ts)}>{moment(row.ts).format('HH:MM')}</td>
 										</tr>
 									))
 								}
