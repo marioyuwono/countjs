@@ -123,7 +123,11 @@ export default function Content({ id }: Readonly<{ id: string }>) {
 											<td className='text-3xl text-black dark:text-gray-300'>
 												{row.v}
 											</td>
-											<td className='text-2xl text-gray-400  dark:text-gray-500 text-right' data-ts={moment(row.ts)}>{moment(row.ts).format('HH:MM')}</td>
+											<td
+												className='text-2xl text-gray-400 dark:text-gray-500 text-right'
+												data-ts={moment(row.ts)}>
+												{moment(row.ts).format('hh:mm')}
+											</td>
 										</tr>
 									))
 									: <tr>
