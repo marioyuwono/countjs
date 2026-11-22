@@ -1,7 +1,7 @@
 'use client'
 import Link from "next/link"
 import { useCallback, useEffect, useState } from "react"
-import { IRow } from "../types/row"
+import { IRowExt } from "@/types/row"
 import { Reload } from "./components/icons"
 
 interface iRef {
@@ -28,7 +28,7 @@ export default function Home() {
 				const values = {} as iRef
 				let sum = 0
 				let lastUpdated = 0
-				data.ls.forEach((row: IRow) => {
+				data.ls.forEach((row: IRowExt) => {
 					lastUpdated = Math.max(lastUpdated, row.ts)
 					values[row.s] = row.v
 					sum += row.v
